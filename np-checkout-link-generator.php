@@ -1,18 +1,23 @@
 <?php
 /*
 Plugin Name: NP Checkout Link Generator
-Description: สร้างลิงก์ checkout สำหรับ WooCommerce พร้อมเลือกสินค้าและคูปอง
-Version: 1.0
+Description: Generate WooCommerce checkout links with selected products and coupons from the admin page.
+Version: 1.1
 Author: Napat
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// Load textdomain for translation
+add_action('plugins_loaded', function() {
+    load_plugin_textdomain('np-checkout-link-generator', false, dirname(plugin_basename(__FILE__)) . '/languages');
+});
+
 // Check WooCommerce version
 add_action('admin_init', function() {
     if (!class_exists('WooCommerce') || version_compare(WC()->version, '10.0', '<')) {
         add_action('admin_notices', function() {
-            echo '<div class="notice notice-error"><p>NP Checkout Link Generator ต้องการ WooCommerce 10.0 ขึ้นไป</p></div>';
+            echo '<div class="notice notice-error"><p>' . __('NP Checkout Link Generator requires WooCommerce 10.0 or higher', 'np-checkout-link-generator') . '</p></div>';
         });
     }
 });
@@ -20,9 +25,9 @@ add_action('admin_init', function() {
 // Add admin menu
 add_action('admin_menu', function() {
     add_submenu_page(
-        'edit.php?post_type=product', // Parent: Products menu
-        'NP Checkout Link Generator',
-        'Checkout Link Generator',
+        'edit.php?post_type=product',
+        __('NP Checkout Link Generator', 'np-checkout-link-generator'),
+        __('Checkout Link Generator', 'np-checkout-link-generator'),
         'manage_woocommerce',
         'np-checkout-link',
         'npclg_render_admin_page',
@@ -107,12 +112,12 @@ add_action('wp_ajax_npclg_search_coupons', function() {
 function npclg_render_admin_page() {
     ?>
     <div class="wrap">
-        <h1>NP Checkout Link Generator</h1>
+        <h1><?php _e('NP Checkout Link Generator', 'np-checkout-link-generator'); ?></h1>
         <form id="npclg-form" onsubmit="return false;">
             <table class="form-table">
                 <tbody id="npclg-products-list">
                     <tr>
-                        <th>สินค้า</th>
+                        <th><?php _e('Product', 'np-checkout-link-generator'); ?></th>
                         <td class="npclg-product-row">
                             <select class="npclg-product-select" style="width:300px;"></select>
                             <input type="number" class="npclg-qty" min="1" value="1" style="width:60px;">
@@ -122,7 +127,7 @@ function npclg_render_admin_page() {
                 </tbody>
                 <tbody>
                     <tr>
-                        <th>คูปอง</th>
+                        <th><?php _e('Coupon', 'np-checkout-link-generator'); ?></th>
                         <td>
                             <select class="npclg-coupon-select" style="width:300px;"></select>
                         </td>
@@ -130,12 +135,12 @@ function npclg_render_admin_page() {
                 </tbody>
             </table>
             <p>
-                <button type="button" class="button button-primary" id="npclg-generate">สร้างลิงก์</button>
+                <button type="button" class="button button-primary" id="npclg-generate"><?php _e('Generate Link', 'np-checkout-link-generator'); ?></button>
             </p>
             <div id="npclg-result" style="display:none;">
                 <input type="text" id="npclg-link" readonly style="width:60%;">
-                <button type="button" class="button" id="npclg-copy">Copy</button>
-                <a href="#" class="button" id="npclg-preview" target="_blank">Preview</a>
+                <button type="button" class="button" id="npclg-copy"><?php _e('Copy', 'np-checkout-link-generator'); ?></button>
+                <a href="#" class="button" id="npclg-preview" target="_blank"><?php _e('Preview', 'np-checkout-link-generator'); ?></a>
             </div>
         </form>
     </div>
@@ -162,7 +167,7 @@ add_action('admin_footer', function() {
                         },
                         cache: true
                     },
-                    placeholder: 'ค้นหาสินค้า...'
+                    placeholder: '<?php _e('Search products...', 'np-checkout-link-generator'); ?>'
                 });
             }
             function initCouponSelect(el) {
@@ -179,10 +184,10 @@ add_action('admin_footer', function() {
                         },
                         cache: true
                     },
-                    placeholder: 'ค้นหาคูปอง...'
+                    placeholder: '<?php _e('Search coupons...', 'np-checkout-link-generator'); ?>'
                 });
             }
-            // สร้างแถวสินค้าใหม่
+            // Create a new product row
             function createProductRow() {
                 var row = $('<tr>');
                 var td = $('<td class="npclg-product-row">');
@@ -191,11 +196,11 @@ add_action('admin_footer', function() {
                 var addBtn = $('<button type="button" class="button npclg-add-product">+</button>');
                 var delBtn = $('<button type="button" class="button npclg-del-product">–</button>');
                 td.append(select).append(qty).append(addBtn).append(delBtn);
-                row.append('<th>สินค้า</th>').append(td);
+                row.append('<th><?php _e('Product', 'np-checkout-link-generator'); ?></th>').append(td);
                 initProductSelect(select);
                 return row;
             }
-            // Render ปุ่ม +/ลบ ให้ถูกต้อง
+            // Render +/Delete buttons correctly
             function updateProductRowButtons() {
                 var rows = $('#npclg-products-list tr');
                 rows.each(function(i){
@@ -238,7 +243,7 @@ add_action('admin_footer', function() {
                 });
                 var coupon = $('.npclg-coupon-select').val();
                 if(products.length === 0) {
-                    alert('กรุณาเลือกสินค้าอย่างน้อย 1 รายการ');
+                    alert('<?php _e('Please select at least 1 product.', 'np-checkout-link-generator'); ?>');
                     return;
                 }
                 var url = NPCLG_AJAX.site_url + '/checkout-link/?products=' + products.join(',');

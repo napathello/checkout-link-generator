@@ -1,0 +1,56 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: NP Checkout Link Generator 1.0\n"
+"POT-Creation-Date: 2024-06-09 00:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: AI\n"
+"Language-Team: Thai\n"
+"Language: th\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: np-checkout-link-generator.php
+msgid "NP Checkout Link Generator requires WooCommerce 10.0 or higher"
+msgstr "NP Checkout Link Generator ต้องการ WooCommerce 10.0 ขึ้นไป"
+
+#: np-checkout-link-generator.php
+msgid "NP Checkout Link Generator"
+msgstr "NP Checkout Link Generator"
+
+#: np-checkout-link-generator.php
+msgid "Checkout Link Generator"
+msgstr "Checkout Link Generator"
+
+#: np-checkout-link-generator.php
+msgid "Product"
+msgstr "สินค้า"
+
+#: np-checkout-link-generator.php
+msgid "Coupon"
+msgstr "คูปอง"
+
+#: np-checkout-link-generator.php
+msgid "Generate Link"
+msgstr "สร้างลิงก์"
+
+#: np-checkout-link-generator.php
+msgid "Copy"
+msgstr "คัดลอก"
+
+#: np-checkout-link-generator.php
+msgid "Preview"
+msgstr "ดูตัวอย่าง"
+
+#: np-checkout-link-generator.php
+msgid "Search products..."
+msgstr "ค้นหาสินค้า..."
+
+#: np-checkout-link-generator.php
+msgid "Search coupons..."
+msgstr "ค้นหาคูปอง..."
+
+#: np-checkout-link-generator.php
+msgid "Please select at least 1 product."
+msgstr "กรุณาเลือกสินค้าอย่างน้อย 1 รายการ" 
