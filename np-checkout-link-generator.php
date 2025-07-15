@@ -292,4 +292,12 @@ add_action('admin_footer', function() {
         </style>
         <?php
     }
-}); 
+});
+
+// Help debug plugin activation via git clone
+register_activation_hook(__FILE__, function() {
+    if (!class_exists('WooCommerce')) {
+        deactivate_plugins(plugin_basename(__FILE__));
+        wp_die(__('WooCommerce is required to use this plugin. Please install and activate WooCommerce first.', 'np-checkout-link-generator'));
+    }
+});
