@@ -77,9 +77,23 @@ add_action('wp_ajax_npclg_search_products', function() {
         $sku = $product->get_sku();
         $label = $product->get_name();
         if ($sku) $label .= " (SKU: $sku)";
+        $image = '';
+        if ($product->get_image_id()) {
+            $image = wp_get_attachment_image_url($product->get_image_id(), 'thumbnail');
+        } elseif ($product->is_type('variation')) {
+            $parent_id = $product->get_parent_id();
+            $parent = wc_get_product($parent_id);
+            if ($parent && $parent->get_image_id()) {
+                $image = wp_get_attachment_image_url($parent->get_image_id(), 'thumbnail');
+            }
+        }
+        if (!$image) {
+            $image = wc_placeholder_img_src('thumbnail');
+        }
         $results[] = [
             'id' => $id,
             'text' => $label,
+            'image' => $image,
         ];
     }
     wp_send_json($results);
@@ -153,6 +167,14 @@ add_action('admin_footer', function() {
         ?>
         <script>
         jQuery(function($){
+            function formatProduct(product) {
+                if (!product.id) return product.text;
+                var img = product.image ? '<img src="'+product.image+'" style="width:32px;height:32px;object-fit:cover;margin-right:8px;vertical-align:middle;">' : '';
+                return $('<span>' + img + product.text + '</span>');
+            }
+            function formatProductSelection(product) {
+                return product.text || '';
+            }
             function initProductSelect(el) {
                 el.select2({
                     ajax: {
@@ -167,7 +189,10 @@ add_action('admin_footer', function() {
                         },
                         cache: true
                     },
-                    placeholder: '<?php _e('Search products...', 'np-checkout-link-generator'); ?>'
+                    placeholder: '<?php _e('Search products...', 'np-checkout-link-generator'); ?>',
+                    templateResult: formatProduct,
+                    templateSelection: formatProductSelection,
+                    escapeMarkup: function(m) { return m; }
                 });
             }
             function initCouponSelect(el) {
